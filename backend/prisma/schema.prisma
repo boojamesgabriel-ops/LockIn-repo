@@ -1,13 +1,52 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  sessions     Session[]
+  streak       Streak?
+  achievements Achievement[]
+}
+
+model Session {
+  id                String   @id @default(cuid())
+  userId            String
+
+  productiveMinutes Int
+  distractionCount  Int
+  idleTime          Int
+  focusScore        Float
+
+  startedAt         DateTime
+  endedAt           DateTime
+
+  user              User @relation(fields: [userId], references: [id])
+}
+
+model Streak {
+  id            String @id @default(cuid())
+  userId        String @unique
+
+  currentStreak Int
+  longestStreak Int
+  lastActive    DateTime
+
+  user          User @relation(fields: [userId], references: [id])
+}
+
+model Achievement {
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  unlockedAt DateTime @default(now())
+
+  user       User @relation(fields: [userId], references: [id])
 }
