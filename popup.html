@@ -6,7 +6,6 @@
     <title>LockIn</title>
     <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
-<script src="script.js"></script>
 <body>
     <section class="popup-section">
         <div class="header-compact-container">
@@ -30,27 +29,27 @@
             </div>
 
             <div class="session-wrapper">
-                <span class="session-header-text">
-                    Quick Sessions
-                </span>
+                <span class="session-header-text">Quick Sessions</span>
 
                 <div class="quick-sessions-container">
-                    <button class="fifteenMin-btn" onclick="quickie_fifteen(document.querySelector('.session-wrapper'))">
+                    <button class="fifteenMin-btn">
                         15m
                     </button>
 
-                    <button class="thirtyMin-btn" onclick="quickie_thirty(document.querySelector('.session-wrapper'))">
+                    <button class="thirtyMin-btn">
                         30m
                     </button>
                     
-                    <button class="fortyfiveMin-btn" onclick="quickie_fortyfive(document.querySelector('.session-wrapper'))">
+                    <button class="fortyfiveMin-btn">
                         45m
                     </button>
 
-                    <button class="sixtyMin-btn" onclick="quickie_sixty(document.querySelector('.session-wrapper'))">
+                    <button class="sixtyMin-btn">
                         60m
                     </button>
                 </div>
+                
+                <div class="session-output"></div>
             </div>
 
             <div class="start-session-container">
@@ -61,12 +60,13 @@
             </div>
 
             <div class="view-session-container">
-                <button class="view-btn" onclick="popUp_extension(document.querySelector('.quick-sessions-container'))">
+                <button class="view-btn" id="view-details-btn">
                     <img src="icons/down.png" class="view-icon">
                     View Details
                 </button>
             </div>
         </div>
     </section>
+<script src="script.js"></script>
 </body>
 </html>
