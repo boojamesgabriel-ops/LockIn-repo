@@ -1,5 +1,8 @@
 let sessionDuration = 0;
 let timerInterval = null;
+let isQuickieMode = false;
+let originalSessionDuration = 0;
+let isOnBreak = false;
 
 function popUp_extension(quick_session){
     quick_session.innerHTML = "";
@@ -14,6 +17,10 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => {
       buttons.forEach(b => b.classList.remove("min-btn-selected"));
       btn.classList.add("min-btn-selected");
+      
+      // Set quickie mode and update display
+      isQuickieMode = true;
+      updateQuickieDisplay();
     });
   });
 });
@@ -24,25 +31,45 @@ document.addEventListener("DOMContentLoaded", function() {
         clearInterval(timerInterval);
         timerInterval = null;
         sessionDuration = 15 * 60;
-        updateDisplay();
+        originalSessionDuration = sessionDuration;
+        if (isQuickieMode) {
+            updateQuickieDisplay();
+        } else {
+            updateDisplay();
+        }
     });
     document.querySelector('.thirtyMin-btn').addEventListener('click', function() {
         clearInterval(timerInterval);
         timerInterval = null;
         sessionDuration = 30 * 60;
-        updateDisplay();
+        originalSessionDuration = sessionDuration;
+        if (isQuickieMode) {
+            updateQuickieDisplay();
+        } else {
+            updateDisplay();
+        }
     });
     document.querySelector('.fortyfiveMin-btn').addEventListener('click', function() {
         clearInterval(timerInterval);
         timerInterval = null;
         sessionDuration = 45 * 60;
-        updateDisplay();
+        originalSessionDuration = sessionDuration;
+        if (isQuickieMode) {
+            updateQuickieDisplay();
+        } else {
+            updateDisplay();
+        }
     });
     document.querySelector('.sixtyMin-btn').addEventListener('click', function() {
         clearInterval(timerInterval);
         timerInterval = null;
         sessionDuration = 60 * 60;
-        updateDisplay();
+        originalSessionDuration = sessionDuration;
+        if (isQuickieMode) {
+            updateQuickieDisplay();
+        } else {
+            updateDisplay();
+        }
     });
     document.getElementById('view-details-btn').addEventListener('click', function() {
         popUp_extension(document.querySelector('.quick-sessions-container'));
@@ -91,6 +118,48 @@ function updateDisplay() {
     output.appendChild(goal_wrapper);
 }
 
+function updateQuickieDisplay() {
+    const output = document.querySelector('.session-output');
+    output.innerHTML = "";
+
+    let quickie_wrapper = document.createElement('div');
+    quickie_wrapper.className = "quickie-container";
+
+    let quickie_text = document.createElement('span');
+    quickie_text.className = "quickie-text";
+    quickie_text.textContent = "QUICKIE";
+
+    let quickie_time = document.createElement('span');
+    quickie_time.className = "quickie-time";
+    quickie_time.textContent = formatTime(sessionDuration);
+
+    quickie_wrapper.appendChild(quickie_text);
+    quickie_wrapper.appendChild(quickie_time);
+
+    output.appendChild(quickie_wrapper);
+}
+
+function updateBreakDisplay() {
+    const output = document.querySelector('.session-output');
+    output.innerHTML = "";
+
+    let break_wrapper = document.createElement('div');
+    break_wrapper.className = "break-container";
+
+    let break_text = document.createElement('span');
+    break_text.className = "break-text";
+    break_text.textContent = "BREAK";
+
+    let break_time = document.createElement('span');
+    break_time.className = "break-time";
+    break_time.textContent = formatTime(sessionDuration);
+
+    break_wrapper.appendChild(break_text);
+    break_wrapper.appendChild(break_time);
+
+    output.appendChild(break_wrapper);
+}
+
 function formatTime(seconds) {
     if (timerInterval) {
         const hours = Math.floor(seconds / 3600);
@@ -112,10 +181,21 @@ function startSession() {
         if (sessionDuration <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
-            showStartButton();
-            alert("Session complete!");
+            if (isOnBreak) {
+                // Break ended, resume original session
+                isOnBreak = false;
+                sessionDuration = originalSessionDuration;
+                updateDisplay(); // Back to normal quickie display
+                showStartButton();
+                alert("Break ended! Resuming session...");
+            } else {
+                // Session completed
+                showStartButton();
+                alert("Session complete!");
+                resetToDefault();
+            }
         }
-        updateDisplay();
+        updateDisplayBasedOnState();
     }, 1000);
     
     showBreakStopButtons();
@@ -125,14 +205,14 @@ function showBreakStopButtons() {
     const container = document.querySelector('.start-session-container');
     container.innerHTML = `
         <div class="break_stop_container">
-            <div class"btns-stop-break">
+            <div class="btns-stop-break">
                 <button class="break-btn" id="break-btn">
                     <img src="icons/break.png" class="stop-break-icon">
                     Break
                 </button>
             </div>
 
-            <div class"btns-stop-break">
+            <div class="btns-stop-break">
                 <button class="stop-btn" id="stop-btn">
                     <img src="icons/stop.png" class="stop-break-icon">
                     Stop
@@ -158,21 +238,76 @@ function showStartButton() {
 function takeBreak() {
     clearInterval(timerInterval);
     timerInterval = null;
-    showStartButton();
+    isOnBreak = true;
+    sessionDuration = 5 * 60; // 5 minute break
+    updateBreakDisplay();
+    
+    // Start break timer
+    timerInterval = setInterval(() => {
+        sessionDuration--;
+        if (sessionDuration <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isOnBreak = false;
+            sessionDuration = originalSessionDuration; // Resume original session
+            updateDisplay(); // Back to quickie display
+            showStartButton();
+            alert("Break ended! Resuming session...");
+        }
+        updateBreakDisplay();
+    }, 1000);
+    
+    showBreakStopButtons();
 }
 
 function stopSession() {
     clearInterval(timerInterval);
     timerInterval = null;
     sessionDuration = 0;
+    isQuickieMode = false;
+    isOnBreak = false;
+    originalSessionDuration = 0;
+    const output = document.querySelector('.session-output');
+    output.innerHTML = "";
+    showStartButton();
+    
+    // Remove selection from buttons
+    const buttons = document.querySelectorAll(
+        ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
+    );
+    buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
+}
+
+function updateDisplayBasedOnState() {
+    if (isOnBreak) {
+        updateBreakDisplay();
+    } else if (isQuickieMode) {
+        updateQuickieDisplay();
+    } else {
+        updateDisplay();
+    }
+}
+
+function resetToDefault() {
+    isQuickieMode = false;
+    isOnBreak = false;
+    sessionDuration = 0;
+    originalSessionDuration = 0;
     updateDisplay();
     showStartButton();
+    
+    // Remove selection from buttons
+    const buttons = document.querySelectorAll(
+        ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
+    );
+    buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
 }
 
 function quickie_fifteen(container){
     clearInterval(timerInterval);
     timerInterval = null;
     sessionDuration = 15 * 60;
+    originalSessionDuration = sessionDuration;
     updateDisplay();
 }
 
@@ -180,6 +315,7 @@ function quickie_thirty(container){
     clearInterval(timerInterval);
     timerInterval = null;
     sessionDuration = 30 * 60;
+    originalSessionDuration = sessionDuration;
     updateDisplay();
 }
 
@@ -187,6 +323,7 @@ function quickie_fortyfive(container){
     clearInterval(timerInterval);
     timerInterval = null;
     sessionDuration = 45 * 60;
+    originalSessionDuration = sessionDuration;
     updateDisplay();
 }
 
@@ -194,5 +331,6 @@ function quickie_sixty(container){
     clearInterval(timerInterval);
     timerInterval = null;
     sessionDuration = 60 * 60;
+    originalSessionDuration = sessionDuration;
     updateDisplay();
 }
