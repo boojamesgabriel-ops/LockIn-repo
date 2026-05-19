@@ -36,7 +36,7 @@
                 <div class="bar-percent-container">
                     <span class="progress-text">
                         Daily Progress
-                    </span>
+                    </span> 
 
                     <span class="progress-percent">
                         77% <!--Should be dynamic too-->
@@ -45,51 +45,77 @@
             </div>
         </div>
 
-        <div class="body-container">
-            <div class="mascot-container">
-                <img src="icons/mascot3.png" class="mascot-icon">
+        <div class="body-wrapper">
+            <div class="body-container">
+                <div class="mascot-container">
+                    <img src="icons/mascot3.png" class="mascot-icon">
 
-                <span class="dynamic-motivation-text">
-                    Resting is also a way of being productive.
-                </span>
-            </div>
+                    <span class="dynamic-motivation-text">
+                        Resting is also a way of being productive.
+                    </span>
+                </div>
 
-            <div class="session-wrapper">
-                <span class="session-header-text">Quick Sessions</span>
+                <div class="session-wrapper">
+                    <span class="session-header-text">QUICK SESSION</span>
 
-                <div class="quick-sessions-container">
-                    <button class="fifteenMin-btn">
-                        15m
-                    </button>
+                    <div class="quick-sessions-container">
+                        <button class="fifteenMin-btn">
+                            <span class="session-header">
+                                15m
+                            </span>
 
-                    <button class="thirtyMin-btn">
-                        30m
-                    </button>
-                     
-                    <button class="fortyfiveMin-btn">
-                        45m
-                    </button>
+                            <span class="session-subheader">
+                                quick
+                            </span>
+                        </button>
 
-                    <button class="sixtyMin-btn">
-                        60m
+                        <button class="thirtyMin-btn">
+                            <span class="session-header">
+                                30m
+                            </span>
+
+                            <span class="session-subheader">
+                                default
+                            </span>
+                        </button>
+                        
+                        <button class="fortyfiveMin-btn">
+                            <span class="session-header">
+                                45m
+                            </span>
+
+                            <span class="session-subheader">
+                                deep
+                            </span>
+                        </button>
+
+                        <button class="sixtyMin-btn">
+                            <span class="session-header">
+                                60m
+                            </span>
+
+                            <span class="session-subheader">
+                                flow
+                            </span>
+                        </button>
+                    </div>
+                    
+                    <div class="session-output"></div>
+                </div>
+
+                <div class="start-session-container">
+                    <button class="start-btn">
+                        <img src="icons/play2.png" class="start-icon">
+                        Start Session
                     </button>
                 </div>
-                
-                <div class="session-output"></div>
-            </div>
 
-            <div class="start-session-container">
-                <button class="start-btn">
-                    <img src="icons/play2.png" class="start-icon">
-                    Start Session
-                </button>
-            </div>
-
-            <div class="view-session-container">
-                <button class="view-btn" id="view-details-btn">
-                    <img src="icons/down.png" class="view-icon">
-                    View Details
-                </button>
+                <div class="view-session-container">
+                    <button class="view-btn" id="view-details-btn">
+                        <img src="icons/down.png" class="view-icon">
+                        View Details
+                    </button>
+                </div>
             </div>
         </div>
     </section>

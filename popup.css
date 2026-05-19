@@ -13,6 +13,12 @@ html, body {
   box-shadow: 0 4px 30px rgba(0,0,0,0.1);
 }
 
+.body-wrapper {
+    background-color: #EAE0CF;
+    margin: 0;
+    padding: 0;
+}
+
 .header-compact-container {
   background-color: #213448;
   padding: 15px 18px;
@@ -75,17 +81,31 @@ html, body {
 }
 
 .body-container {
-    background-color: #EAE0CF;
     padding: 15px 10px 15px 0;
+    display: flex;
+    flex-direction: column;
+    margin: 0 17px;
+    gap: 10px;
 }
 
 .mascot-container {
     display: flex;
+    justify-content: center;
+    background-color: #faf4ec;
+    border-radius: 10px;
+    border: 1px solid rgb(185, 185, 185);
+    gap: 8px;
+    padding: 10px;
 }
 
 .mascot-icon {
-    padding: 10px;
-    border-radius: 60%;
+    background-color: #213448;
+    border: 3px solid #547792;
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    padding: 5px;
+    border-radius: 50%;
 }
 
 .dynamic-motivation-text {
@@ -188,11 +208,11 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #547792;
+    background-color: transparent;
+    border: 1px solid rgb(162, 162, 162);
     color: white;
     font-weight: bold;
     padding: 5px 55px;
-    border: none;
     border-radius: 10px;
     cursor: pointer;
     gap: 5px;
@@ -204,7 +224,8 @@ html, body {
 .thirtyMin-btn:hover,
 .fortyfiveMin-btn:hover,
 .sixtyMin-btn:hover {
-    background-color: #213448;
+    background-color: #452829;
+    border-radius: 7px;
 }
 
 .start-icon {
@@ -214,7 +235,6 @@ html, body {
 
 .view-session-container {
     display: flex;
-    margin-top: 10px;
     justify-content: center;
 }
 
@@ -222,11 +242,11 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #547792;
+    background-color: transparent;
     color: white;
     font-weight: bold;
     padding: 5px 10px;
-    border: none;
+    border: 1px solid rgb(162, 162, 162);
     border-radius: 10px;
     cursor: pointer;
     gap: 5px;
@@ -240,11 +260,13 @@ html, body {
 
 .session-header-text {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
     display: flex;
     align-items: flex-start;
-    margin: 10px 0 0 20px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    color: #213448;
+    font-weight: 700;
 }
 
 .session-wrapper {
@@ -256,20 +278,31 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    margin: 5px 0 10px 0;
+    gap: 5px;
 }
 
 .fifteenMin-btn,
 .thirtyMin-btn,
 .fortyfiveMin-btn,
 .sixtyMin-btn {
-    padding: 5px 10px;
-    border-radius: 10px;
+    padding: 10px 12px;
+    border: none;
     cursor: pointer;
-    background-color: #547792;
+    background-color: transparent;
     color: white;
     border-color: white;
+}
+
+.session-header {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.session-subheader {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    font-size: 9px;
 }
 
 .min-btn-selected {
