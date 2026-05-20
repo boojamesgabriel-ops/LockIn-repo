@@ -95,7 +95,7 @@ html, body {
     border-radius: 10px;
     border: 1px solid rgb(185, 185, 185);
     gap: 8px;
-    padding: 10px;
+    padding: 13px;
 }
 
 .mascot-icon {
@@ -302,13 +302,14 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 5px;
 }
 
 .fifteenMin-btn,
 .thirtyMin-btn,
 .fortyfiveMin-btn,
 .sixtyMin-btn {
-    padding: 10px 12px;
+    padding: 10px 15px;
     border: none;
     cursor: pointer;
     background-color: transparent;

@@ -239,6 +239,8 @@ function takeBreak() {
     clearInterval(timerInterval);
     timerInterval = null;
     isOnBreak = true;
+    // Save current session time (remaining) to resume later
+    originalSessionDuration = sessionDuration;
     sessionDuration = 5 * 60; // 5 minute break
     updateBreakDisplay();
     
@@ -249,15 +251,27 @@ function takeBreak() {
             clearInterval(timerInterval);
             timerInterval = null;
             isOnBreak = false;
-            sessionDuration = originalSessionDuration; // Resume original session
-            updateDisplay(); // Back to quickie display
-            showStartButton();
+            sessionDuration = originalSessionDuration; // Resume from where we left off
+            updateQuickieDisplay(); // Back to quickie display
+            showBreakStopButtons();
+            // Reset break button to break (not continue) since session is fully resumed
+            const breakBtn = document.getElementById('break-btn');
+            if (breakBtn) {
+                breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Break`;
+                breakBtn.onclick = takeBreak;
+            }
             alert("Break ended! Resuming session...");
         }
         updateBreakDisplay();
     }, 1000);
     
     showBreakStopButtons();
+    // Change the break button to a continue button
+    const breakBtn = document.getElementById('break-btn');
+    if (breakBtn) {
+        breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Continue`;
+        breakBtn.onclick = resumeSession;
+    }
 }
 
 function stopSession() {
@@ -276,6 +290,24 @@ function stopSession() {
         ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
     );
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
+}
+
+function resumeSession() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isOnBreak = false;
+    // sessionDuration is already set to originalSessionDuration in takeBreak when break ends
+    // But if user clicks continue during break, we need to resume from remaining break time
+    // Actually, let's just resume the original session (not the break)
+    sessionDuration = originalSessionDuration; // Resume the original session
+    updateQuickieDisplay(); // Back to quickie display
+    showBreakStopButtons(); // Reset buttons to break and stop
+    // Change the continue button back to a break button
+    const breakBtn = document.getElementById('break-btn');
+    if (breakBtn) {
+        breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Break`;
+        breakBtn.onclick = takeBreak;
+    }
 }
 
 function updateDisplayBasedOnState() {
