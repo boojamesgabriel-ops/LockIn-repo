@@ -5,7 +5,7 @@ html, body {
 }
 
 .popup-section {
-  width: 280px;                 
+  width: 310px;                 
   overflow: hidden;     
   background: rgba(255, 255, 255, 0.2); 
   backdrop-filter: blur(12px);
@@ -17,6 +17,9 @@ html, body {
     background-color: #EAE0CF;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .header-compact-container {
@@ -86,6 +89,7 @@ html, body {
     flex-direction: column;
     margin: 0 17px;
     gap: 10px;
+    align-items: stretch;
 }
 
 .mascot-container {
@@ -109,7 +113,6 @@ html, body {
 }
 
 .dynamic-motivation-text {
-    margin-top: 10px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-style: italic;
     font-size: 12px;
@@ -120,11 +123,15 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid rgb(255, 255, 255);
-    padding: 10px 50px 10px 8px;
+    border: 1px solid rgb(185, 185, 185);
+    padding: 10px 35px 10px 0;
+    max-width: none;
+    max-height: none;
     row-gap: 5px;
-    background-color: white;
+    background-color: #faf4ec;
     border-radius: 10px;
+    box-sizing: border-box;
+    flex: 1;
 }
 
 .today-text,
@@ -137,9 +144,13 @@ html, body {
 .today-time {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 12px;
-    color: #00b023;
+    color: #026c17;
     font-weight: bold;
     font-size: 14px;
+    width: 70px;
+    margin-left: 20px;
+    display: flex;
+    gap: 5px;
 }
 
 .goal-time {
@@ -148,6 +159,10 @@ html, body {
     color: rgb(0, 0, 0);
     font-weight: bold;
     font-size: 14px;
+    width: 70px;
+    margin-left: 20px;
+    display: flex;
+    gap: 5px;
 }
 
 .progress-bar-wrapper {           
@@ -158,7 +173,7 @@ html, body {
 }
 
 .progress-container {
-  width: 245px;                   
+  width: 275px;                   
   background: #c8c8c8;
   border-radius: 10px;
   overflow: hidden;
@@ -228,8 +243,6 @@ html, body {
     border-radius: 7px;
 }
 
-
-
 .min-btn-selected,
 .fifteenMin-btn:active,
 .fifteenMin-btn:focus,
@@ -279,7 +292,7 @@ html, body {
     display: flex;
     align-items: flex-start;
     margin-top: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     color: #2b2b2b4f;
     font-weight: 450;
 }
@@ -287,15 +300,6 @@ html, body {
 .session-wrapper {
     display: flex;
     flex-direction: column;
-}
-
-.quickie-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 15px;
-    background-color: #452829;
 }
 
 .quick-sessions-container {
@@ -339,13 +343,19 @@ html, body {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    margin-bottom: 5px;
 }
 
 .today-goal-container {
     display: flex;
-    justify-content: center; 
     gap: 13px;
     margin-bottom: 10px;             
+}
+
+.today-goal-wrapper {
+    display: flex;
+    gap: 10px;
+    width: 100%;
 }
 
 .break-btn,
@@ -355,7 +365,7 @@ html, body {
     font-weight: 500;
     font-size: 14px;
     color: white;
-    background-color: #547792;
+    background-color: #57595B;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -370,9 +380,12 @@ html, body {
     width: 18px;
 }
 
-.break-btn:hover,
-.stop-btn:hover {
+.break-btn:hover{
     background-color: #213448;
+}
+
+.stop-btn:hover {
+    background-color: #94161a;
 }
 
 .break_stop_container {
@@ -380,4 +393,29 @@ html, body {
     gap: 10px;
     justify-content: center;
     align-items: center;
+}
+
+.break-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    gap: 10px;
+}
+
+.break-text {
+    font-size: 13px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+}
+
+.break-time {
+    padding: 8px 10px;
+    background-color: transparent;
+    color: red;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 10px;
+    width: 50px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
 }

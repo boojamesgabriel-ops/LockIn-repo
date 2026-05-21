@@ -119,28 +119,18 @@ function updateDisplay() {
 }
 
 function updateQuickieDisplay() {
-    const output = document.querySelector('.session-output');
+    const output = document.querySelector('.today-time');
     output.innerHTML = "";
-
-    let quickie_wrapper = document.createElement('div');
-    quickie_wrapper.className = "quickie-container";
-
-    let quickie_text = document.createElement('span');
-    quickie_text.className = "quickie-text";
-    quickie_text.textContent = "QUICKIE";
 
     let quickie_time = document.createElement('span');
     quickie_time.className = "quickie-time";
     quickie_time.textContent = formatTime(sessionDuration);
 
-    quickie_wrapper.appendChild(quickie_text);
-    quickie_wrapper.appendChild(quickie_time);
-
-    output.appendChild(quickie_wrapper);
+    output.appendChild(quickie_time);
 }
 
 function updateBreakDisplay() {
-    const output = document.querySelector('.session-output');
+    const output = document.querySelector('.dynamic-motivation-text');
     output.innerHTML = "";
 
     let break_wrapper = document.createElement('div');
@@ -148,7 +138,7 @@ function updateBreakDisplay() {
 
     let break_text = document.createElement('span');
     break_text.className = "break-text";
-    break_text.textContent = "BREAK";
+    break_text.textContent = "Take a well deserved rest.";
 
     let break_time = document.createElement('span');
     break_time.className = "break-time";
