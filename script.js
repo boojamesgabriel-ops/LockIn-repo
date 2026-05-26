@@ -179,9 +179,200 @@ function popUp_extension(body_wrapper){
     container_wrapper.appendChild(day_icon_wrapper);
     container_wrapper.appendChild(bar_text_wrapper);
 
+    let focus_mode_wrapper = document.createElement('div');
+    focus_mode_wrapper.className = "focus_mode_wrapper";
+
+    let focus_header_container = document.createElement('div');
+    focus_header_container.className = 'focus_header_container';
+
+    let icon_text = document.createElement('div');
+    icon_text.className = 'icon_text_focus';
+
+    let focus_icon = document.createElement('img');
+    focus_icon.className = 'focus_icon';
+    focus_icon.src = 'icons/focus.png';
+
+    let focus_text = document.createElement('span');
+    focus_text.className = 'focus_text';
+    focus_text.textContent = 'Focus Mode';
+
+    icon_text.appendChild(focus_icon);
+    icon_text.appendChild(focus_text);
+
+    let focus_status = document.createElement('span');
+    focus_status.className = 'focus_status';
+    focus_status.textContent = 'Active'; //should be applied dynamically active/inactive
+
+    focus_header_container.appendChild(icon_text);
+    focus_header_container.appendChild(focus_status);
+
+    let focus_body = document.createElement('div');
+    focus_body.className = 'focus_body';
+
+    let fb_wrapper = document.createElement('div');
+    fb_wrapper.className = 'focuses_wrapper';
+
+    let fb_container = document.createElement('div');
+    fb_container.className = 'focuses_container';
+
+    let fb_icon = document.createElement('img');
+    fb_icon.className = 'focus_icon';
+    fb_icon.src = 'icons/fb.png';
+
+    let fb_text = document.createElement('span');
+    fb_text.className = 'focus_icon_text';
+    fb_text.textContent = 'Facebook';
+
+    fb_container.appendChild(fb_icon);
+    fb_container.appendChild(fb_text);
+
+    let toggle1 = document.createElement('div');
+    toggle1.className = 'toggle';
+
+    let knob1 = document.createElement('div');
+    knob1.className = 'knob';
+
+    toggle1.appendChild(knob1);
+
+    fb_wrapper.appendChild(fb_container);
+    fb_wrapper.appendChild(toggle1);
+
+    let ig_wrapper = document.createElement('div');
+    ig_wrapper.className = 'focuses_wrapper';
+
+    let ig_container = document.createElement('div');
+    ig_container.className = 'focuses_container';
+
+    let ig_icon = document.createElement('img');
+    ig_icon.className = 'focus_icon';
+    ig_icon.src = 'icons/ig.png';
+
+    let ig_text = document.createElement('span');
+    ig_text.className = 'focus_icon_text';
+    ig_text.textContent = 'Instagram';
+
+    ig_container.appendChild(ig_icon);
+    ig_container.appendChild(ig_text);
+
+    let toggle2 = document.createElement('div');
+    toggle2.className = 'toggle';
+
+    let knob2 = document.createElement('div');
+    knob2.className = 'knob';
+
+    toggle2.appendChild(knob2);
+
+    ig_wrapper.appendChild(ig_container);
+    ig_wrapper.appendChild(toggle2);
+
+    let breakline1 = document.createElement('hr');
+
+    let x_wrapper = document.createElement('div');
+    x_wrapper.className = 'focuses_wrapper';
+
+    let x_container = document.createElement('div');
+    x_container.className = 'focuses_container';
+
+    let x_icon = document.createElement('img');
+    x_icon.className = 'focus_icon';
+    x_icon.src = 'icons/x.png';
+
+    let x_text = document.createElement('span');
+    x_text.className = 'focus_icon_text';
+    x_text.textContent = 'Instagram';
+
+    x_container.appendChild(x_icon);
+    x_container.appendChild(x_text);
+
+    let toggle3 = document.createElement('div');
+    toggle3.className = 'toggle';
+
+    let knob3 = document.createElement('div');
+    knob3.className = 'knob';
+
+    toggle3.appendChild(knob3);
+
+    x_wrapper.appendChild(x_container);
+    x_wrapper.appendChild(toggle3);
+
+
+    let breakline2 = document.createElement('hr');
+
+    let tiktok_wrapper = document.createElement('div');
+    tiktok_wrapper.className = 'focuses_wrapper';
+
+    let tiktok_container = document.createElement('div');
+    tiktok_container.className = 'focuses_container';
+
+    let tiktok_icon = document.createElement('img');
+    tiktok_icon.className = 'focus_icon';
+    tiktok_icon.src = 'icons/tiktok.png';
+
+    let tiktok_text = document.createElement('span');
+    tiktok_text.className = 'focus_icon_text';
+    tiktok_text.textContent = 'Tiktok';
+
+    tiktok_container.appendChild(tiktok_icon);
+    tiktok_container.appendChild(tiktok_text);
+
+    let toggle4 = document.createElement('div');
+    toggle4.className = 'toggle';
+
+    let knob4 = document.createElement('div');
+    knob4.className = 'knob';
+
+    toggle4.appendChild(knob4);
+
+    tiktok_wrapper.appendChild(tiktok_container);
+    tiktok_wrapper.appendChild(toggle4);
+
+    let breakline3 = document.createElement('hr');
+
+    let yt_wrapper = document.createElement('div');
+    yt_wrapper.className = 'focuses_wrapper';
+
+    let yt_container = document.createElement('div');
+    yt_container.className = 'focuses_container';
+
+    let yt_icon = document.createElement('img');
+    yt_icon.className = 'focus_icon';
+    yt_icon.src = 'icons/yt.png';
+
+    let yt_text = document.createElement('span');
+    yt_text.className = 'focus_icon_text';
+    yt_text.textContent = 'Youtube';
+
+    yt_container.appendChild(yt_icon);
+    yt_container.appendChild(yt_text);
+
+    let toggle5 = document.createElement('div');
+    toggle5.className = 'toggle';
+
+    let knob5 = document.createElement('div');
+    knob5.className = 'knob';
+
+    toggle5.appendChild(knob5);
+
+    yt_wrapper.appendChild(yt_container);
+    yt_wrapper.appendChild(toggle5);
+
+    let breakline4 = document.createElement('hr');
+
+    focus_body.appendChild(fb_wrapper);
+    focus_body.appendChild(breakline1);
+    focus_body.appendChild(ig_wrapper);
+    focus_body.appendChild(breakline2);
+    focus_body.appendChild(x_wrapper);
+    focus_body.appendChild(breakline3);
+    focus_body.appendChild(tiktok_wrapper);
+    focus_body.appendChild(breakline4);
+    focus_body.appendChild(yt_wrapper);
+
     body_section.appendChild(extension_header_container);
     body_section.appendChild(streak_container);
     body_section.appendChild(container_wrapper);
+    body_section.appendChild(focus_header_container);
+    body_section.appendChild(focus_body);
 
     body_wrapper.appendChild(body_section);
 }
