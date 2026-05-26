@@ -436,7 +436,7 @@ function popUp_extension(body_wrapper){
     ai_icon.className = 'ai_icon';
 
     let ai_text = document.createElement('span');
-    ai_text.className = 'ai_icon';
+    ai_text.className = 'ai_text';
     ai_text.textContent = 'AI suggestions';
 
     ai_icon_text.appendChild(ai_icon);
@@ -449,6 +449,24 @@ function popUp_extension(body_wrapper){
     suggestion_container.appendChild(ai_icon_text);
     suggestion_container.appendChild(past_sesh);
 
+    let lower_suggestion_container = document.createElement('div');
+    lower_suggestion_container.className = 'lower_suggestion_container';
+
+    let dummy = document.createElement('span');
+    dummy.className = 'dummy';
+
+    //each suggestion by ai will be sent in this div
+    let each_suggestion = document.createElement('div');
+    each_suggestion.className = 'each_suggestion';
+
+    //btn for proceeding
+    let proceed = document.createElement('button');
+    proceed.className = 'proceed';
+    proceed.src = 'icons/play2.png';
+
+    lower_suggestion_container.appendChild(dummy);
+
+    lower_suggestion_container.appendChild(each_suggestion);
     
 
 
@@ -460,6 +478,7 @@ function popUp_extension(body_wrapper){
     body_section.appendChild(sched_container);
     body_section.appendChild(sched_btns_container);
     body_section.appendChild(suggestion_container);
+    body_section.appendChild(lower_suggestion_container);
 
     body_wrapper.appendChild(body_section);
 }
