@@ -468,7 +468,50 @@ function popUp_extension(body_wrapper){
 
     lower_suggestion_container.appendChild(each_suggestion);
     
+    let detection_wrapper = document.createElement('div');
+    detection_wrapper.className = 'detection_wrapper';
 
+    let detection_container = document.createElement('div');
+    detection_container.className = 'detection_container';
+
+    let detection_icon = document.createElement('img');
+    detection_icon.className = 'detection_icon';
+    detection_icon.src = 'icons/detection.png';
+
+    let detection_text = document.createElement('span');
+    detection_text.className = 'detection_text';
+    detection_text.textContent = 'Idle detection';
+
+    detection_container.appendChild(detection_icon);
+    detection_container.appendChild(detection_text);
+
+    let lower_detection_container = document.createElement('div');
+    lower_detection_container.className = 'lower_detection_container';
+
+    let inner_detection_container = document.createElement('div');
+    inner_detection_container.className = 'inner_detection_container';
+
+    let glowing_green = document.createElement('div');
+    glowing_green.className = 'status-circle';
+
+    let active_container = document.createElement('div');
+    active_container.className = 'active_container';
+
+    let active_text = document.createElement('span');
+    active_text.className = 'active_text';
+    active_text.textContent = 'Active Now -'; // should be dynamic either active or inactive
+
+    let active_msg = document.createElement('span');
+    active_msg.className = 'active_msg';
+    active_msg.textContent = ' no idle detected in the last 25 minutes. Keep it up!';
+
+    active_container.appendChild(active_text);
+    active_container.appendChild(active_msg);
+
+    inner_detection_container.appendChild(glowing_green);
+    inner_detection_container.appendChild(active_container);
+
+    lower_detection_container.appendChild(inner_detection_container);
 
     body_section.appendChild(extension_header_container);
     body_section.appendChild(streak_container);
@@ -479,6 +522,8 @@ function popUp_extension(body_wrapper){
     body_section.appendChild(sched_btns_container);
     body_section.appendChild(suggestion_container);
     body_section.appendChild(lower_suggestion_container);
+    body_section.appendChild(detection_container);
+    body_section.appendChild(lower_detection_container);
 
     body_wrapper.appendChild(body_section);
 }
