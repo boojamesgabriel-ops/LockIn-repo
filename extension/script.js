@@ -568,54 +568,23 @@ function popUp_extension(body_wrapper){
     body_wrapper.appendChild(body_section);
 }
 
-
-// Save state to chrome storage
-function saveState() {
-    chrome.storage.local.set({
-        sessionDuration: sessionDuration,
-        sessionBreak: sessionBreak,
-        isQuickieMode: isQuickieMode,
-        hasSelection: hasSelection,
-        originalSessionDuration: originalSessionDuration,
-        isOnBreak: isOnBreak
+async function saveState(state) {
+    const response = await chrome.runtime.sendMessage({
+        action: "saveState",
+        payload: state
     });
+    return response.success;
 }
 
-// Load state from chrome storage
-function loadState(callback) {
-    chrome.storage.local.get([
-        'sessionDuration',
-        'sessionBreak',
-        'isQuickieMode',
-        'hasSelection',
-        'originalSessionDuration',
-        'isOnBreak'
-    ], (result) => {
-        if (result.sessionDuration !== undefined) {
-            sessionDuration = result.sessionDuration;
-            originalSessionDuration = result.originalSessionDuration || result.sessionDuration;
-            isQuickieMode = result.isQuickieMode;
-            hasSelection = result.hasSelection;
-            isOnBreak = result.isOnBreak;
-            sessionBreak = result.sessionBreak || 0;
-            
-            // Update UI
-            updateQuickieDisplay();
-            
-            // Re-highlight the selected button based on time
-            if (sessionDuration > 0) {
-                const minutes = Math.floor(sessionDuration / 60);
-                const btnMap = {15: 'fifteenMin-btn', 30: 'thirtyMin-btn', 45: 'fortyfiveMin-btn', 60: 'sixtyMin-btn'};
-                const selectedBtn = btnMap[minutes];
-                if (selectedBtn) {
-                    const btn = document.querySelector('.' + selectedBtn);
-                    if (btn) btn.classList.add('min-btn-selected');
-                }
-            }
-        }
-        if (callback) callback();
-    });
+async function loadState(){
+    const response = await chrome.runtime.sendMessage({ action: "loadState"});
+    return response.state;
 }
+
+
+
+
+
 
 function showConfirmOverlay(message, onConfirm, onCancel) {
     const overlay = document.getElementById('confirmation-overlay');
