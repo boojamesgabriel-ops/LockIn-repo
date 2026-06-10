@@ -568,22 +568,32 @@ function popUp_extension(body_wrapper){
     body_wrapper.appendChild(body_section);
 }
 
+//saving the state
 async function saveState(state) {
-    const response = await chrome.runtime.sendMessage({
-        action: "saveState",
-        payload: state
-    });
-    return response.success;
+    console.log("[LockIn] saveState() called:", state);
+  try {
+    const resp = await chrome.runtime.sendMessage({ action: "saveState", state });
+    console.log("[LockIn] saveState response:", resp);
+    return resp;
+  } catch (err) {
+    console.error("[LockIn] saveState error:", err);
+    throw err;
+  }
+
 }
 
+//loading back up the state
 async function loadState(){
-    const response = await chrome.runtime.sendMessage({ action: "loadState"});
-    return response.state;
+    console.log("[LockIn] loadState() called");
+  try {
+    const resp = await chrome.runtime.sendMessage({ action: "loadState" });
+    console.log("[LockIn] loadState response:", resp);
+    return resp?.state ?? null;
+  } catch (err) {
+    console.error("[LockIn] loadState error:", err);
+    throw err;
+  }
 }
-
-
-
-
 
 
 function showConfirmOverlay(message, onConfirm, onCancel) {
@@ -616,8 +626,16 @@ function showConfirmOverlay(message, onConfirm, onCancel) {
     noBtn.addEventListener('click', handleNo);
 }
 
+function DomReady(fn) {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        fn();
+    } else {
+        document.addEventListener("DOMContentLoaded", fn);
+    }
+}
+
 // Initialize button handlers
-function initButtonHandlers() {
+function initButtonHandlers() {console.log
     const buttons = document.querySelectorAll(
         ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
     );
@@ -703,6 +721,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Initialize button handlers after state is loaded
         initButtonHandlers();
     });
+
+    DomReady(initButtonHandlers);
 });
 
 function updateDisplay() {
@@ -916,8 +936,20 @@ function stopSession() {
     const buttons = document.querySelectorAll(
         ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
     );
+    console.log("Buttons found:", buttons.length);
+
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
+
     saveState();
+    try {
+    saveState().then(() => {
+      console.log("saveState called successfully");
+    }).catch(err => {
+      console.error("saveState failed:", err);
+    });
+  } catch (err) {
+    console.error("saveState threw an error:", err);
+  }
 }
 
 function resumeSession() {
