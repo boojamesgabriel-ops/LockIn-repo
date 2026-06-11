@@ -6,6 +6,7 @@ let hasSelection = false;
 let originalSessionDuration = 0;
 let isOnBreak = false;
 let pendingDuration = null;
+let control_btn = null;
 
 function popUp_extension(body_wrapper){
     body_wrapper.innerHTML = "";
@@ -634,7 +635,8 @@ function getCurrentState(){
         hasSelection,
         originalSessionDuration,
         isOnBreak,
-        pendingDuration
+        pendingDuration,
+        control_btn
      };
 }
 
@@ -729,41 +731,47 @@ function initButtonHandlers() {
 }
 
 // Load saved state and initialize
-document.addEventListener("DOMContentLoaded", async () => {
-    const state = await loadState();
-    if(state){
-        sessionDuration = state.sessionDuration;
-        originalSessionDuration = state.originalSessionDuration;
-        sessionBreak = state.sessionBreak;
-        hasSelection = state.hasSelection;
-        isOnBreak = state.isOnBreak;
-        pendingDuration = state.pendingDuration;
+function applyStateToUi(state) {
+  sessionDuration = state.sessionDuration;
+  originalSessionDuration = state.originalSessionDuration;
+  sessionBreak = state.sessionBreak;
+  hasSelection = state.hasSelection;
+  isOnBreak = state.isOnBreak;
+  pendingDuration = state.pendingDuration;
+  control_btn = state.break_id;
 
-        //this will update the UI highlights
-        if (hasSelection && sessionDuration > 0) {
-            const minutes = Math.floor(sessionDuration / 60);
-
-            const btnMap = {
-                15: "fifteenMin-btn",
-                30: "thirtyMin-btn",
-                45: "fortyfiveMin-btn",
-                60: "sixtyMin-btn"
-            };
-            
-            const selectedBtnClass = btnMap[minutes];
-            if (selectedBtnClass) {
-                const btn = document.querySelector("." + selectedBtnClass);
-
-                if(btn) btn.classList.add("min-btn-selected");
-            }
-        }
-
-        //update the text displays
-        if(isOnBreak) updateBreakDisplay();
-        updateDisplay();
+  // highlight duration button
+  if (hasSelection && sessionDuration > 0) {
+    const minutes = Math.floor(sessionDuration / 60);
+    const btnMap = {15:"fifteenMin-btn",30:"thirtyMin-btn",45:"fortyfiveMin-btn",60:"sixtyMin-btn"};
+    const selectedBtnClass = btnMap[minutes];
+    if (selectedBtnClass) {
+      const btn = document.querySelector("." + selectedBtnClass);
+      if(btn) btn.classList.add("min-btn-selected");
     }
-        initButtonHandlers();
+  }
+
+  // highlight break/stop button if needed
+  if (control_btn) {
+    const btn = document.getElementById(control_btn);
+    if (btn) btn.classList.add("active");
+  }
+  
+
+  // update text displays
+  if(state.isOnBreak) updateBreakDisplay();
+  updateDisplay();
+}
+
+// usage
+document.addEventListener("DOMContentLoaded", async () => {
+  const state = await loadState();
+    if(state) {
+        applyStateToUi(state);
+    }
+  initButtonHandlers();
 });
+
 
 function updateDisplay() {
     const output = document.querySelector('.today-goal-wrapper');
@@ -795,7 +803,6 @@ function updateDisplay() {
 
     let goal_time = document.createElement('span');
     goal_time.className = "goal-time";
-    goal_time.textContent = formatTime(sessionDuration);
 
     goal_container.appendChild(goal_text);
     goal_container.appendChild(goal_time);
@@ -883,7 +890,7 @@ function startSession() {
 function showBreakStopButtons() {
     const container = document.querySelector('.start-session-container');
     container.innerHTML = `
-        <div class="break_stop_container">
+        <div class="break_stop_container" id="break_stop_id">
             <div class="btns-stop-break">
                 <button class="break-btn" id="break-btn">
                     <img src="icons/break.png" class="stop-break-icon">
@@ -899,8 +906,16 @@ function showBreakStopButtons() {
             </div>
         </div>
     `;
-    document.getElementById('break-btn').addEventListener('click', takeBreak);
-    document.getElementById('stop-btn').addEventListener('click', stopSession);
+    document.getElementById('break-btn').addEventListener('click', () => {
+        control_btn = 'break-btn';
+        saveState(getCurrentState());
+        takeBreak();
+    });
+    document.getElementById('stop-btn').addEventListener('click', () => {
+        control_btn = 'stop-btn';
+        saveState(getCurrentState());
+        stopSession();
+    });
 }
 
 function showStartButton() {
@@ -956,6 +971,7 @@ function takeBreak() {
         breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Continue`;
         breakBtn.onclick = resumeSession;
     }
+    saveState(getCurrentState());
 }
 
 
