@@ -626,6 +626,18 @@ function showConfirmOverlay(message, onConfirm, onCancel) {
     noBtn.addEventListener('click', handleNo);
 }
 
+function getCurrentState(){
+     return {
+        sessionDuration,
+        sessionBreak,
+        isQuickieMode,
+        hasSelection,
+        originalSessionDuration,
+        isOnBreak,
+        pendingDuration
+     };
+}
+
 function DomReady(fn) {
     if (document.readyState === "complete" || document.readyState === "interactive") {
         fn();
@@ -635,7 +647,9 @@ function DomReady(fn) {
 }
 
 // Initialize button handlers
-function initButtonHandlers() {console.log
+function initButtonHandlers() {
+    console.log("[LockIn] initButtonHandlers called");
+
     const buttons = document.querySelectorAll(
         ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
     );
@@ -676,7 +690,7 @@ function initButtonHandlers() {console.log
                         originalSessionDuration = sessionDuration;
                         updateQuickieDisplay();
                         hasSelection = false;
-                        saveState();
+                        saveState(getCurrentState());
                         
                         // Immediately start the new session
                         setTimeout(() => startSession(), 0);
@@ -704,7 +718,7 @@ function initButtonHandlers() {console.log
             sessionDuration = duration * 60;
             originalSessionDuration = sessionDuration;
             updateQuickieDisplay();
-            saveState();
+            saveState(getCurrentState());
         });
     });
     
@@ -715,18 +729,44 @@ function initButtonHandlers() {console.log
 }
 
 // Load saved state and initialize
-document.addEventListener("DOMContentLoaded", () => {
-    // Load saved state first
-    loadState(() => {
-        // Initialize button handlers after state is loaded
-        initButtonHandlers();
-    });
+document.addEventListener("DOMContentLoaded", async () => {
+    const state = await loadState();
+    if(state){
+        sessionDuration = state.sessionDuration;
+        originalSessionDuration = state.originalSessionDuration;
+        sessionBreak = state.sessionBreak;
+        hasSelection = state.hasSelection;
+        isOnBreak = state.isOnBreak;
+        pendingDuration = state.pendingDuration;
 
-    DomReady(initButtonHandlers);
+        //this will update the UI highlights
+        if (hasSelection && sessionDuration > 0) {
+            const minutes = Math.floor(sessionDuration / 60);
+
+            const btnMap = {
+                15: "fifteenMin-btn",
+                30: "thirtyMin-btn",
+                45: "fortyfiveMin-btn",
+                60: "sixtyMin-btn"
+            };
+            
+            const selectedBtnClass = btnMap[minutes];
+            if (selectedBtnClass) {
+                const btn = document.querySelector("." + selectedBtnClass);
+
+                if(btn) btn.classList.add("min-btn-selected");
+            }
+        }
+
+        //update the text displays
+        if(isOnBreak) updateBreakDisplay();
+        updateDisplay();
+    }
+        initButtonHandlers();
 });
 
 function updateDisplay() {
-    const output = document.querySelector('.session-output');
+    const output = document.querySelector('.today-goal-wrapper');
     output.innerHTML = "";
 
     let goal_wrapper = document.createElement('div');
@@ -737,7 +777,7 @@ function updateDisplay() {
 
     let today_text = document.createElement('span');
     today_text.className = "today-text";
-    today_text.textContent = "TODAY";
+    today_text.textContent = "CURRENT";
 
     let today_time = document.createElement('span');
     today_time.className = "today-time";
@@ -751,7 +791,7 @@ function updateDisplay() {
 
     let goal_text = document.createElement('span');
     goal_text.className = "goal-text";
-    goal_text.textContent = "GOAL";
+    goal_text.textContent = "DAILY GOAL";
 
     let goal_time = document.createElement('span');
     goal_time.className = "goal-time";
@@ -837,7 +877,7 @@ function startSession() {
     }, 1000);
     
     showBreakStopButtons();
-    saveState();
+    saveState(getCurrentState());
 }
 
 function showBreakStopButtons() {
@@ -940,9 +980,9 @@ function stopSession() {
 
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
 
-    saveState();
+    saveState(getCurrentState());
     try {
-    saveState().then(() => {
+    saveState(getCurrentState()).then(() => {
       console.log("saveState called successfully");
     }).catch(err => {
       console.error("saveState failed:", err);
