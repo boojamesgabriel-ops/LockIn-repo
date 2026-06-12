@@ -758,7 +758,9 @@ function applyStateToUi(state) {
         }
     }
 
-    if (controlState === "break_stop") {
+    if (controlState === "start") {
+    showStartButton();
+    } else if (controlState === "break_stop" || controlState === "resume") {
         showBreakStopButtons();
     } else {
         showStartButton();
@@ -934,7 +936,7 @@ function showStartButton() {
         </button>
     `;
     const startBtn = document.querySelector('.start-btn');
-    startBtn.CDATA_SECTION_NODE.lockinStartHandler = "1";
+    startBtn.dataset.lockinStartHandler = "1";
     startBtn.addEventListener('click', startSession);
 
     saveState(getCurrentState());
@@ -1020,11 +1022,12 @@ function stopSession() {
 }
 
 function resumeSession() {
+    controlState = "resume";
     const output = document.querySelector('.dynamic-motivation-text');
     output.innerHTML = "";
 
     let continue_text = document.createElement('span');
-    continue_text.textContent = "Let's get back to work and perform better!" 
+    continue_text.textContent = "Let's get back to work and perform better!"; 
     
     output.appendChild(continue_text);
 
@@ -1046,8 +1049,8 @@ function resumeSession() {
             clearInterval(timerInterval);
             timerInterval = null;
             showStartButton();
-            alert("Session complete!");
             resetToDefault();
+            alert("Session complete!");
         }
         updateQuickieDisplay();
     }, 1000);
@@ -1057,6 +1060,8 @@ function resumeSession() {
         breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Break`;
         breakBtn.onclick = takeBreak;
     }
+
+    saveState(getCurrentState());
 }
 
 function updateDisplayBasedOnState() {
@@ -1075,6 +1080,8 @@ function resetToDefault() {
     isOnBreak = false;
     sessionDuration = 0;
     originalSessionDuration = 0;
+    controlState = "start";
+
     updateDisplay();
     showStartButton();
     
@@ -1083,6 +1090,8 @@ function resetToDefault() {
         ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
     );
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
+
+    saveState(getCurrentState());
 }
 
 function quickie_fifteen(container){
