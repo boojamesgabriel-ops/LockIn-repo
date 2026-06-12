@@ -7,6 +7,7 @@ let originalSessionDuration = 0;
 let isOnBreak = false;
 let pendingDuration = null;
 let control_btn = null;
+let controlState = "start";
 
 function popUp_extension(body_wrapper){
     body_wrapper.innerHTML = "";
@@ -636,7 +637,7 @@ function getCurrentState(){
         originalSessionDuration,
         isOnBreak,
         pendingDuration,
-        control_btn
+        controlState
      };
 }
 
@@ -732,35 +733,40 @@ function initButtonHandlers() {
 
 // Load saved state and initialize
 function applyStateToUi(state) {
-  sessionDuration = state.sessionDuration;
-  originalSessionDuration = state.originalSessionDuration;
-  sessionBreak = state.sessionBreak;
-  hasSelection = state.hasSelection;
-  isOnBreak = state.isOnBreak;
-  pendingDuration = state.pendingDuration;
-  control_btn = state.break_id;
+    sessionDuration = state.sessionDuration;
+    originalSessionDuration = state.originalSessionDuration;
+    sessionBreak = state.sessionBreak;
+    hasSelection = state.hasSelection;
+    isOnBreak = state.isOnBreak;
+    pendingDuration = state.pendingDuration;
+    controlState = state.controlState ?? "start";
+        
 
-  // highlight duration button
   if (hasSelection && sessionDuration > 0) {
-    const minutes = Math.floor(sessionDuration / 60);
-    const btnMap = {15:"fifteenMin-btn",30:"thirtyMin-btn",45:"fortyfiveMin-btn",60:"sixtyMin-btn"};
-    const selectedBtnClass = btnMap[minutes];
-    if (selectedBtnClass) {
-      const btn = document.querySelector("." + selectedBtnClass);
-      if(btn) btn.classList.add("min-btn-selected");
+        const minutes = Math.floor(sessionDuration / 60);
+        const btnMap = {
+            15: "fifteenMin-btn",
+            30: "thirtyMin-btn",
+            45: "fortyfiveMin-btn",
+            60: "sixtyMin-btn"
+        };
+
+        const selectedBtnClass = btnMap[minutes];
+        if (selectedBtnClass) {
+            const btn = document.querySelector("." + selectedBtnClass);
+            if (btn) btn.classList.add("min-btn-selected");
+        }
     }
-  }
 
-  // highlight break/stop button if needed
-  if (control_btn) {
-    const btn = document.getElementById(control_btn);
-    if (btn) btn.classList.add("active");
-  }
-  
+    if (controlState === "break_stop") {
+        showBreakStopButtons();
+    } else {
+        showStartButton();
+    }
 
-  // update text displays
-  if(state.isOnBreak) updateBreakDisplay();
-  updateDisplay();
+    if (state.isOnBreak) updateBreakDisplay();
+    updateDisplay();
+
 }
 
 // usage
@@ -888,6 +894,8 @@ function startSession() {
 }
 
 function showBreakStopButtons() {
+    controlState = "break_stop";
+
     const container = document.querySelector('.start-session-container');
     container.innerHTML = `
         <div class="break_stop_container" id="break_stop_id">
@@ -907,18 +915,17 @@ function showBreakStopButtons() {
         </div>
     `;
     document.getElementById('break-btn').addEventListener('click', () => {
-        control_btn = 'break-btn';
-        saveState(getCurrentState());
         takeBreak();
     });
     document.getElementById('stop-btn').addEventListener('click', () => {
-        control_btn = 'stop-btn';
-        saveState(getCurrentState());
         stopSession();
     });
+    saveState(getCurrentState());
 }
 
 function showStartButton() {
+    controlState = "start";
+
     const container = document.querySelector('.start-session-container');
     container.innerHTML = `
         <button class="start-btn">
@@ -926,7 +933,11 @@ function showStartButton() {
             Start Session
         </button>
     `;
-    document.querySelector('.start-btn').addEventListener('click', startSession);
+    const startBtn = document.querySelector('.start-btn');
+    startBtn.CDATA_SECTION_NODE.lockinStartHandler = "1";
+    startBtn.addEventListener('click', startSession);
+
+    saveState(getCurrentState());
 }
 
 function takeBreak() {
