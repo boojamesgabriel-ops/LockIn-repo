@@ -11,6 +11,8 @@ async function loadState() {
     hasSelection: false,
     originalSessionDuration: 0,
     isOnBreak: false,
+    controlState: "start",
+    breakBtnText: "break",
     lastModified: Date.now()
   }
 }

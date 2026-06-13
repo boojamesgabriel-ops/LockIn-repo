@@ -8,6 +8,7 @@ let isOnBreak = false;
 let pendingDuration = null;
 let control_btn = null;
 let controlState = "start";
+let breakBtnText = "break";
 
 function popUp_extension(body_wrapper){
     body_wrapper.innerHTML = "";
@@ -637,7 +638,8 @@ function getCurrentState(){
         originalSessionDuration,
         isOnBreak,
         pendingDuration,
-        controlState
+        controlState,
+        breakBtnText
      };
 }
 
@@ -740,6 +742,7 @@ function applyStateToUi(state) {
     isOnBreak = state.isOnBreak;
     pendingDuration = state.pendingDuration;
     controlState = state.controlState ?? "start";
+    breakBtnText = state.breakBtnText ?? "break";
         
 
   if (hasSelection && sessionDuration > 0) {
@@ -779,6 +782,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   initButtonHandlers();
 });
+
+//helper function to display the continue textContent during break
+function applyBreakBtnText(){
+    const breakBtn = document.getElementById('break-btn');
+    if(!breakBtn) return;
+
+    const text = breakBtnText === "continue" ? "Continue" : "Break";
+
+    breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> ${text}`;
+}
 
 
 function updateDisplay() {
@@ -916,13 +929,23 @@ function showBreakStopButtons() {
             </div>
         </div>
     `;
-    document.getElementById('break-btn').addEventListener('click', () => {
-        takeBreak();
+    const breakBtn = document.getElementById('break-btn');
+
+    breakBtn.addEventListener('click', () => {
+        if (breakBtnText === "continue") {
+            resumeSession();
+        } else {
+            takeBreak();
+        }
     });
+
     document.getElementById('stop-btn').addEventListener('click', () => {
         stopSession();
     });
+
+    applyBreakBtnText();
     saveState(getCurrentState());
+
 }
 
 function showStartButton() {
@@ -952,25 +975,24 @@ function takeBreak() {
 
     // Start break timer (5 minutes)
     sessionBreak = 5 * 60;
+    breakBtnText = "continue";
+
     updateBreakDisplay();
 
     timerInterval = setInterval(() => {
         sessionBreak--; // decrement break, not sessionDuration
+
         if (sessionBreak <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
             isOnBreak = false;
+            breakBtnText = "break";
 
             // Resume Quickie from saved time
             sessionDuration = originalSessionDuration;
             updateQuickieDisplay();
             showBreakStopButtons();
 
-            const breakBtn = document.getElementById('break-btn');
-            if (breakBtn) {
-                breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Break`;
-                breakBtn.onclick = takeBreak;
-            }
             alert("Break ended! Resuming session...");
         }
         updateBreakDisplay();
@@ -990,16 +1012,22 @@ function takeBreak() {
 
 function stopSession() {
     clearInterval(timerInterval);
+
     hasSelection = false;
     timerInterval = null;
     sessionDuration = 0;
     isQuickieMode = false;
     isOnBreak = false;
     originalSessionDuration = 0;
+    breakBtnText = "break";
+
     const output = document.querySelector('.today-time');
     output.innerHTML = "0h 0m";
+
     const mascot_text = document.querySelector('.dynamic-motivation-text');
+
     mascot_text.innerHTML = "See you on your next session to Lock in.";
+
     showStartButton();
     
     const buttons = document.querySelectorAll(
@@ -1009,20 +1037,16 @@ function stopSession() {
 
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
 
-    saveState(getCurrentState());
-    try {
-    saveState(getCurrentState()).then(() => {
-      console.log("saveState called successfully");
-    }).catch(err => {
-      console.error("saveState failed:", err);
+    saveState(getCurrentState())
+    .then(() => {
+        console.log("saveState called successfully");
+    })
+    .catch(err => {
+        console.error("saveState failed:", err);
     });
-  } catch (err) {
-    console.error("saveState threw an error:", err);
-  }
 }
 
 function resumeSession() {
-    controlState = "resume";
     const output = document.querySelector('.dynamic-motivation-text');
     output.innerHTML = "";
 
@@ -1033,6 +1057,9 @@ function resumeSession() {
 
     clearInterval(timerInterval);
     timerInterval = null;
+
+    controlState = "break_stop";
+    breakBtnText = "break";
     isOnBreak = false;
     // sessionDuration is already set to originalSessionDuration in takeBreak when break ends
     // But if user clicks continue during break, we need to resume from remaining break time
@@ -1048,18 +1075,15 @@ function resumeSession() {
         if (sessionDuration <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
-            showStartButton();
+
             resetToDefault();
             alert("Session complete!");
+            return;
         }
+
         updateQuickieDisplay();
+        saveState(getCurrentState());
     }, 1000);
-    
-    const breakBtn = document.getElementById('break-btn');
-    if (breakBtn) {
-        breakBtn.innerHTML = `<img src="icons/break.png" class="stop-break-icon"> Break`;
-        breakBtn.onclick = takeBreak;
-    }
 
     saveState(getCurrentState());
 }
@@ -1081,6 +1105,7 @@ function resetToDefault() {
     sessionDuration = 0;
     originalSessionDuration = 0;
     controlState = "start";
+    breakBtnText = "break";
 
     updateDisplay();
     showStartButton();
