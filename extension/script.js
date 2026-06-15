@@ -777,11 +777,41 @@ function applyStateToUi(state) {
 // usage
 document.addEventListener("DOMContentLoaded", async () => {
   const state = await loadState();
+
     if(state) {
+        const wasRunning = (state.controlState === "break_stop" || state.controlState === "resume") && state.sessionDuration > 0;
+
+        const elapsedTime = Math.floor((Date.now() - state.lastModified) / 1000);
+
+        if (wasRunning && elapsedTime > 0 && (state.sessionDuration > 0 || state.sessionBreak > 0)) {
+            if (state.isOnBreak) {
+                state.sessionBreak = Math.max(0, state.sessionBreak - elapsedTime);
+
+                if (state.sessionBreak <= 0) {
+                    state.isOnBreak = false;
+                    state.sessionDuration = state.originalSessionDuration;
+                    state.controlState = "break_stop";
+                    state.breakBtnText = "break";
+                }
+            } else {
+                state.sessionDuration = Math.max(0, state.sessionDuration - elapsedTime);
+                if (state.sessionDuration <= 0) {
+                    alert("Session Complete!");
+                    state.controlState = "start";
+                    state.hasSelection = false;
+                    state.isQuickieMode = false;
+                }
+            }
+            await saveState(state);
+        }
         applyStateToUi(state);
     }
   initButtonHandlers();
 });
+
+function getElapsedTime(state) {
+    return Math.floor((Date.now() - state.lastModified) / 1000);
+}
 
 //helper function to display the continue textContent during break
 function applyBreakBtnText(){
@@ -867,14 +897,10 @@ function updateBreakDisplay() {
 }
 
 function formatTime(seconds) {
-    if (timerInterval) {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
     return `${hours}h ${minutes}m`;
 }
 
