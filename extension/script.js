@@ -798,7 +798,10 @@ function applyStateToUi(state) {
 document.addEventListener("DOMContentLoaded", async () => {
   const state = await loadState();
 
-    if(state) {
+    if (state) {
+
+        applyStateToUi(state);
+
         const wasRunning = (state.controlState === "break_stop" || state.controlState === "resume") && state.sessionDuration > 0;
 
         const elapsedTime = Math.floor((Date.now() - state.lastModified) / 1000);
@@ -809,7 +812,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (state.sessionBreak <= 0) {
                     state.isOnBreak = false;
-                    state.sessionDuration = state.originalSessionDuration;
                     state.controlState = "break_stop";
                     state.breakBtnText = "break";
                 }
@@ -823,10 +825,51 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
             await saveState(state);
+
+            applyStateToUi(state);
         }
-        applyStateToUi(state);
+
+        // Restart the active timer if session was running
+        if (wasRunning && !timerInterval) {
+            if (isOnBreak && state.sessionBreak > 0) {
+                // Restart break interval
+                timerInterval = setInterval(() => {
+                    sessionBreak--;
+                    if (sessionBreak <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        isOnBreak = false;
+                        breakBtnText = "break";
+
+                        updateQuickieDisplay();
+                        progressBar();
+                        showBreakStopButtons();
+
+                        alert("Break ended! Resuming session...");
+                        saveState(getCurrentState());
+                    }
+                    updateBreakDisplay();
+                    progressBar();
+                }, 1000);
+            } else if (!isOnBreak && state.sessionDuration > 0) {
+                // Restart session interval
+                timerInterval = setInterval(() => {
+                    sessionDuration--;
+                    if (sessionDuration <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        alert("Session complete!");
+                        resetToDefault();
+                    }
+                    updateDisplayBasedOnState();
+                    progressBar();
+                }, 1000);
+                showBreakStopButtons();
+            }
+            saveState(getCurrentState());
+        }
     }
-  initButtonHandlers();
+    initButtonHandlers();
 });
 
 function getElapsedTime(state) {
@@ -941,7 +984,6 @@ function startSession() {
             if (isOnBreak) {
                 // Break ended, resume original session
                 isOnBreak = false;
-                sessionDuration = originalSessionDuration;
                 updateDisplay(); // Back to normal quickie display
                 showStartButton();
                 alert("Break ended! Resuming session...");
@@ -1022,9 +1064,6 @@ function takeBreak() {
     timerInterval = null;
     isOnBreak = true;
 
-    // Save remaining Quickie time
-    originalSessionDuration = sessionDuration;
-
     // Start break timer (5 minutes)
     sessionBreak = 5 * 60;
     breakBtnText = "continue";
@@ -1042,7 +1081,6 @@ function takeBreak() {
             breakBtnText = "break";
 
             // Resume Quickie from saved time
-            sessionDuration = originalSessionDuration;
             updateQuickieDisplay();
             progressBar();
             showBreakStopButtons();
@@ -1118,7 +1156,6 @@ function resumeSession() {
     // sessionDuration is already set to originalSessionDuration in takeBreak when break ends
     // But if user clicks continue during break, we need to resume from remaining break time
     // Actually, let's just resume the original session (not the break)
-    sessionDuration = originalSessionDuration; // Resume the original session
     
     updateQuickieDisplay(); // Back to quickie display
     progressBar();
