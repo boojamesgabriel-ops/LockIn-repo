@@ -694,7 +694,7 @@ function initButtonHandlers() {
                         sessionDuration = duration * 60;
                         originalSessionDuration = sessionDuration;
                         updateQuickieDisplay();
-                        hasSelection = false;
+                        hasSelection = true;
                         saveState(getCurrentState());
                         
                         // Immediately start the new session
@@ -897,10 +897,15 @@ function updateBreakDisplay() {
 }
 
 function formatTime(seconds) {
+    const isTimerActive = timerInterval || controlState === "break_stop" || controlState === "resume";
+
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
+    if (isTimerActive) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
     return `${hours}h ${minutes}m`;
 }
 
