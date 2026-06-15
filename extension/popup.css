@@ -218,7 +218,7 @@ html, body {
 
 .progress-bar {
     height: 4px;
-    width: 77%;             
+    width: 0%;             
     background: #1c9e38a8;       
     border-radius: 10px 0 0 10px; 
     transition: width 0.4s ease; /

@@ -651,6 +651,25 @@ function DomReady(fn) {
     }
 }
 
+function progressBar(){
+    const bar = document.querySelector('.progress-bar');
+    const percentText = document.querySelector('.progress-percent');
+
+    if (!bar || !percentText) return;
+
+    if (originalSessionDuration > 0){
+        const elapsed = originalSessionDuration - sessionDuration;
+        const pct = Math.round((elapsed / originalSessionDuration) * 100);
+
+        bar.style.width = pct + '%';
+        percentText.textContent = pct + '%';
+    } else {
+        //No session active - resetting the bar
+        bar.style.width = '0%';
+        percentText.textContent = '0%';
+    }
+}
+
 // Initialize button handlers
 function initButtonHandlers() {
     console.log("[LockIn] initButtonHandlers called");
@@ -771,6 +790,7 @@ function applyStateToUi(state) {
 
     if (state.isOnBreak) updateBreakDisplay();
     updateDisplay();
+    progressBar();
 
 }
 
@@ -933,6 +953,7 @@ function startSession() {
             }
         }
         updateDisplayBasedOnState();
+        progressBar();
     }, 1000);
     
     showBreakStopButtons();
@@ -1009,6 +1030,7 @@ function takeBreak() {
     breakBtnText = "continue";
 
     updateBreakDisplay();
+    progressBar();
 
     timerInterval = setInterval(() => {
         sessionBreak--; // decrement break, not sessionDuration
@@ -1022,6 +1044,7 @@ function takeBreak() {
             // Resume Quickie from saved time
             sessionDuration = originalSessionDuration;
             updateQuickieDisplay();
+            progressBar();
             showBreakStopButtons();
 
             alert("Break ended! Resuming session...");
@@ -1098,6 +1121,7 @@ function resumeSession() {
     sessionDuration = originalSessionDuration; // Resume the original session
     
     updateQuickieDisplay(); // Back to quickie display
+    progressBar();
     showBreakStopButtons(); // Reset buttons to break and stop
     // Change the continue button back to a break button
     
