@@ -86,7 +86,8 @@ html, body {
   align-self: flex-start;
 }
 
-.compact-btn {
+.compact-btn, 
+.expand-btn {
   background: rgba(255, 255, 255, 0.2);   
   backdrop-filter: blur(6px);             
   -webkit-backdrop-filter: blur(6px);     

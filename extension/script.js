@@ -9,29 +9,35 @@ let pendingDuration = null;
 let control_btn = null;
 let controlState = "start";
 let breakBtnText = "break";
+let compactHTML = "";
 
 function popUp_extension(body_wrapper){
     body_wrapper.innerHTML = "";
 
-    let headerTextStreak = document.querySelector('.header-right');
+    document.querySelector(".compact-container")?.remove();
 
+    // In popUp_extension() — replace the current header button logic with:
+    let headerRight = document.querySelector('.header-right');
+
+    // Hide the original expand button container
+    let expandContainer = document.querySelector('.expand-container');
+    if (expandContainer) expandContainer.style.display = 'none';
+
+    // Create a NEW container for the compact button
     let compact_container = document.createElement('div');
     compact_container.className = 'compact-container';
 
-    headerTextStreak.appendChild(compact_container);
-    
     let compact_btn = document.createElement('button');
     compact_btn.className = 'compact-btn';
+    compact_btn.id = "compact-details-btn";
 
     let compact_icon = document.createElement('img');
     compact_icon.className = "compact_icon";
     compact_icon.src = 'icons/up.png';
 
     compact_btn.appendChild(compact_icon);
-
-    let rightContainer = headerTextStreak.querySelector('.compact-container');
-
-    rightContainer.appendChild(compact_btn);
+    compact_container.appendChild(compact_btn);
+    headerRight.appendChild(compact_container);  // append to header, not to expandContainer
 
     let body_section = document.createElement('section');
     body_section.className = "extension-section";
@@ -569,6 +575,8 @@ function popUp_extension(body_wrapper){
     body_section.appendChild(footer_container);
 
     body_wrapper.appendChild(body_section);
+
+    document.querySelector('.compact-btn').addEventListener('click', loadCompact);
 }
 
 //saving the state
@@ -583,6 +591,24 @@ async function saveState(state) {
     throw err;
   }
 
+}
+
+function saveCompact(){
+    compactHTML = document.querySelector(".body-wrapper").innerHTML;
+}
+
+async function loadCompact(){
+    const state = await loadState();
+
+    document.querySelector('.body-wrapper').innerHTML = compactHTML;
+
+    // Show the expand button, remove the compact button
+    document.querySelector('.expand-container').style.display = '';
+    document.querySelector('.compact-container')?.remove();
+
+    applyStateToUi(state);
+    progressBar();
+    initButtonHandlers();
 }
 
 //loading back up the state
@@ -746,7 +772,7 @@ function initButtonHandlers() {
         });
     });
     
-    document.getElementById('view-details-btn')?.addEventListener('click', function() {
+    document.getElementById('expand-details-btn')?.addEventListener('click', function() {
         popUp_extension(document.querySelector('.body-wrapper'));
     });
     document.querySelector('.start-btn')?.addEventListener('click', startSession);
@@ -800,6 +826,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (state) {
 
+        saveCompact();
         applyStateToUi(state);
 
         const wasRunning = (state.controlState === "break_stop" || state.controlState === "resume") && state.sessionDuration > 0;
@@ -1121,6 +1148,7 @@ function stopSession() {
     mascot_text.innerHTML = "See you on your next session to Lock in.";
 
     showStartButton();
+    progressBar();
     
     const buttons = document.querySelectorAll(
         ".fifteenMin-btn, .thirtyMin-btn, .fortyfiveMin-btn, .sixtyMin-btn"
@@ -1201,6 +1229,7 @@ function resetToDefault() {
 
     updateDisplay();
     showStartButton();
+    progressBar();
     
     // Remove selection from buttons
     const buttons = document.querySelectorAll(
@@ -1209,36 +1238,4 @@ function resetToDefault() {
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
 
     saveState(getCurrentState());
-}
-
-function quickie_fifteen(container){
-    clearInterval(timerInterval);
-    timerInterval = null;
-    sessionDuration = 15 * 60;
-    originalSessionDuration = sessionDuration;
-    updateDisplay();
-}
-
-function quickie_thirty(container){
-    clearInterval(timerInterval);
-    timerInterval = null;
-    sessionDuration = 30 * 60;
-    originalSessionDuration = sessionDuration;
-    updateDisplay();
-}
-
-function quickie_fortyfive(container){
-    clearInterval(timerInterval);
-    timerInterval = null;
-    sessionDuration = 45 * 60;
-    originalSessionDuration = sessionDuration;
-    updateDisplay();
-}
-
-function quickie_sixty(container){
-    clearInterval(timerInterval);
-    timerInterval = null;
-    sessionDuration = 60 * 60;
-    originalSessionDuration = sessionDuration;
-    updateDisplay();
 }
