@@ -10,6 +10,9 @@ let control_btn = null;
 let controlState = "start";
 let breakBtnText = "break";
 let compactHTML = "";
+let streakCount = 0;
+let currentStreak = 0;
+let lastSessionDate = "";
 
 function popUp_extension(body_wrapper){
     body_wrapper.innerHTML = "";
@@ -82,14 +85,24 @@ function popUp_extension(body_wrapper){
 
     let next = document.createElement('span');
     next.className = 'next_extension';
-    next.textContent = 'Next:';
+    next.textContent = 'Next: ';
+
+    let days_container = document.createElement('div');
+    days_container.className = 'extension-days-container';
 
     let next_days = document.createElement('span');
     next_days.className = 'days_extension';
-    next_days.textContent = '10 days'; //should be implemented dynamically
+    next_days.textContent = '3 '; //should be implemented dynamically
 
-    next_container.appendChild(next);
-    next_container.appendChild(next_days);
+    let text_days = document.createElement('span');
+    text_days.className = 'text_days_extension';
+    text_days.textContent = 'days';
+
+    days_container.appendChild(next);
+    days_container.appendChild(next_days);
+    days_container.appendChild(text_days);
+
+    next_container.appendChild(days_container);
     streak_container.appendChild(next_container);
 
     let bottom_streak_container = document.createElement('div');
@@ -131,7 +144,7 @@ function popUp_extension(body_wrapper){
 
     let day_icon10 = document.createElement('img');
     day_icon10.src = 'icons/star.png';
-    day_icon10.className = "star_extension";
+    day_icon10.className = "trophy_extension";
 
     let day_num10 = document.createElement('span');
     day_num10.className = 'day_num_extension_other';
@@ -145,7 +158,7 @@ function popUp_extension(body_wrapper){
 
     let day_icon14 = document.createElement('img');
     day_icon14.src = 'icons/target.png';
-    day_icon14.className = "target_extension";
+    day_icon14.className = "trophy_extension";
 
     let day_num14 = document.createElement('span');
     day_num14.className = 'day_num_extension_other';
@@ -159,7 +172,7 @@ function popUp_extension(body_wrapper){
 
     let day_icon30 = document.createElement('img');
     day_icon30.src = 'icons/diamond.png';
-    day_icon30.className = "target_extension";
+    day_icon30.className = "trophy_extension";
 
     let day_num30 = document.createElement('span');
     day_num30.className = 'day_num_extension_other';
@@ -193,7 +206,7 @@ function popUp_extension(body_wrapper){
 
     let num_days = document.createElement('span');
     num_days.className = 'extension_num_days';
-    num_days.textContent = '2';
+    num_days.textContent = '3';
 
     let to_go = document.createElement('span');
     to_go.className = 'extension_to_go';
@@ -665,7 +678,10 @@ function getCurrentState(){
         isOnBreak,
         pendingDuration,
         controlState,
-        breakBtnText
+        breakBtnText,
+        streakCount,
+        currentStreak,
+        lastSessionDate,
      };
 }
 
@@ -788,7 +804,9 @@ function applyStateToUi(state) {
     pendingDuration = state.pendingDuration;
     controlState = state.controlState ?? "start";
     breakBtnText = state.breakBtnText ?? "break";
-        
+    currentStreak = state.currentStreak ?? 0;
+    streakCount = state.currentStreak ?? 0;
+    lastSessionDate = state.lastSessionDate ?? "";
 
   if (hasSelection && sessionDuration > 0) {
         const minutes = Math.floor(sessionDuration / 60);
@@ -1086,6 +1104,7 @@ function showStartButton() {
     saveState(getCurrentState());
 }
 
+//updates the display and works on the functionality of the break
 function takeBreak() {
     clearInterval(timerInterval);
     timerInterval = null;
@@ -1128,7 +1147,7 @@ function takeBreak() {
     saveState(getCurrentState());
 }
 
-
+//Stops the session
 function stopSession() {
     clearInterval(timerInterval);
 
@@ -1166,6 +1185,7 @@ function stopSession() {
     });
 }
 
+//continues the session from break
 function resumeSession() {
     const output = document.querySelector('.dynamic-motivation-text');
     output.innerHTML = "";
@@ -1208,6 +1228,7 @@ function resumeSession() {
     saveState(getCurrentState());
 }
 
+//updates the display based off the conditions
 function updateDisplayBasedOnState() {
     if (isOnBreak) {
         updateBreakDisplay();
@@ -1218,6 +1239,7 @@ function updateDisplayBasedOnState() {
     }
 }
 
+//resets the states to default
 function resetToDefault() {
     hasSelection = false;
     isQuickieMode = false;
@@ -1238,4 +1260,12 @@ function resetToDefault() {
     buttons.forEach(btn => btn.classList.remove("min-btn-selected"));
 
     saveState(getCurrentState());
+}
+
+function updateStreak() {
+    let streakCountEl = document.querySelector('.streak-count');
+    let daysToGoEl = document.querySelector('.extension_num_days')
+    let nextMileStone = document.querySelector('.days_extension');
+    let streakBar = document.querySelector('.streak_bar')
+
 }

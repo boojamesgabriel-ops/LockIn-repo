@@ -13,6 +13,9 @@ async function loadState() {
     isOnBreak: false,
     controlState: "start",
     breakBtnText: "break",
+    streakCount: 0,
+    currentStreak: 0,
+    lastSessionDate: "",
     lastModified: Date.now()
   }
 }
