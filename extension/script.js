@@ -1273,7 +1273,7 @@ function resetToDefault() {
 function updateStreak() {
     const streakCountEl = document.querySelector('.streak-count');
     const daysToGoEl = document.querySelector('.extension_num_days');
-    const nextMileStone = document.querySelector('.days_extension');
+    const toMileStone = document.querySelector('.days_extension');
 
     const nextDaysEl = document.querySelector('.days_extension');
     if(!nextDaysEl) return;
@@ -1282,23 +1282,32 @@ function updateStreak() {
     if (nextDays)nextDaysEl.textContent = daysToGo;
     daysToGoEl.textContent = daysToGo;
 
-    //updating the steak bar
-    console.log('milestones array:', milestones);
-    console.log('currentStreak:', currentStreak);
-    console.log('nextMileStone:', nextMileStone);
 
+
+
+    //updating the steak bar
     const streakBar = document.querySelector('.streak_bar');
     if(!streakBar) return;
 
     const nextMileStone = milestones.find(m => m.days > currentStreak);
     if (!nextMileStone) return;
 
+    const prevMileStone = milestones.find(m => m.days < currentStreak);
+    if(!prevMileStone) return;
+
     if (currentStreak > 0){
-        const pct = (currentStreak / nextMileStone.days) * 100;
+        const progressStreak = currentStreak - prevMileStone.days;
+
+        const wideMilestone = nextMileStone.days - prevMileStone.days;
+        
+        const pct = (progressStreak / wideMilestone) * 100;
 
         streakBar.style.width = pct + '%';
     } else {
         streakBar.style.width = '0%';
     }
+    console.log('milestones array:', milestones);
+    console.log('currentStreak:', currentStreak);
+    console.log('nextMileStone:', nextMileStone);
 }
 
