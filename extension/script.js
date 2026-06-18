@@ -14,6 +14,14 @@ let streakCount = 0;
 let currentStreak = 0;
 let lastSessionDate = "";
 
+const milestones = [
+        { days: 3,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
+        { days: 7,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
+        { days: 10, icon: 'icons/star.png',    className: 'star_extension',   textClass: 'day_num_extension_other' },
+        { days: 14, icon: 'icons/target.png',  className: 'target_extension', textClass: 'day_num_extension_other' },
+        { days: 30, icon: 'icons/diamond.png', className: 'target_extension', textClass: 'day_num_extension_other' },
+    ];
+
 function popUp_extension(body_wrapper){
     body_wrapper.innerHTML = "";
 
@@ -147,7 +155,7 @@ function popUp_extension(body_wrapper){
     day_icon10.className = "trophy_extension";
 
     let day_num10 = document.createElement('span');
-    day_num10.className = 'day_num_extension_other';
+    day_num10.className = 'day_num_extension';
     day_num10.textContent = "10d";
 
     day_icon_container10.appendChild(day_icon10);
@@ -161,7 +169,7 @@ function popUp_extension(body_wrapper){
     day_icon14.className = "trophy_extension";
 
     let day_num14 = document.createElement('span');
-    day_num14.className = 'day_num_extension_other';
+    day_num14.className = 'day_num_extension';
     day_num14.textContent = "14d";
 
     day_icon_container14.appendChild(day_icon14);
@@ -175,7 +183,7 @@ function popUp_extension(body_wrapper){
     day_icon30.className = "trophy_extension";
 
     let day_num30 = document.createElement('span');
-    day_num30.className = 'day_num_extension_other';
+    day_num30.className = 'day_num_extension';
     day_num30.textContent = "30d";
 
     day_icon_container30.appendChild(day_icon30);
@@ -1263,9 +1271,34 @@ function resetToDefault() {
 }
 
 function updateStreak() {
-    let streakCountEl = document.querySelector('.streak-count');
-    let daysToGoEl = document.querySelector('.extension_num_days')
-    let nextMileStone = document.querySelector('.days_extension');
-    let streakBar = document.querySelector('.streak_bar')
+    const streakCountEl = document.querySelector('.streak-count');
+    const daysToGoEl = document.querySelector('.extension_num_days');
+    const nextMileStone = document.querySelector('.days_extension');
 
+    const nextDaysEl = document.querySelector('.days_extension');
+    if(!nextDaysEl) return;
+
+    const daysToGo = document.querySelector('.extension_num_days');
+    if (nextDays)nextDaysEl.textContent = daysToGo;
+    daysToGoEl.textContent = daysToGo;
+
+    //updating the steak bar
+    console.log('milestones array:', milestones);
+    console.log('currentStreak:', currentStreak);
+    console.log('nextMileStone:', nextMileStone);
+
+    const streakBar = document.querySelector('.streak_bar');
+    if(!streakBar) return;
+
+    const nextMileStone = milestones.find(m => m.days > currentStreak);
+    if (!nextMileStone) return;
+
+    if (currentStreak > 0){
+        const pct = (currentStreak / nextMileStone.days) * 100;
+
+        streakBar.style.width = pct + '%';
+    } else {
+        streakBar.style.width = '0%';
+    }
 }
+

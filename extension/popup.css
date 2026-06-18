@@ -625,11 +625,6 @@ html, body {
 .day_num_extension {
     font-weight: bold;
     font-size: 10px;
-}
-
-.day_num_extension_other {
-    font-weight: bold;
-    font-size: 10px;
     color: rgb(137, 132, 132);
 }
 
