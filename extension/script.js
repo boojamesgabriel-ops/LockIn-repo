@@ -1270,24 +1270,30 @@ function resetToDefault() {
     saveState(getCurrentState());
 }
 
+//updating the UI
 function updateStreak() {
     const streakCountEl = document.querySelector('.streak-count');
-    const daysToGoEl = document.querySelector('.extension_num_days');
-    const nextDaysEl = document.querySelector('.days_extension');
-    const streakBar = document.querySelector('.streak_bar');
+    if (!streakCountEl) return;
 
+    const daysToGoEl = document.querySelector('.extension_num_days');
+    if (!daysToGoEl) return;
+
+    const nextDaysEl = document.querySelector('.days_extension');
+    if (!nextDaysEl) return;
+
+    const streakBar = document.querySelector('.streak_bar');
     if(!streakBar) return;
     
     const highestMilestone = milestones[milestones.length - 1].days;
     if (currentStreak > highestMilestone) {
-        updateMilestone();
+        milestones = updateMilestone();
     }
 
     const nextMileStone = milestones.find(m => m.days > currentStreak);
     if (!nextMileStone) {
         streakBar.style.width = '100%';
-        nextDaysEl.textContent = 0;
-        daysToGoEl.textContent = 0;
+        nextDaysEl.textContent = '0';
+        daysToGoEl.textContent = '0';
         streakCountEl.textContent = currentStreak;
         return;
     }    
@@ -1297,22 +1303,19 @@ function updateStreak() {
         return;
     }
 
-    if(!nextDaysEl) return;
-
     const daysToGo = nextMileStone.days - currentStreak;
     nextDaysEl.textContent = daysToGo;
     daysToGoEl.textContent = daysToGo;
     streakCountEl.textContent = currentStreak;
 
-    //updating the streak bar
-        const progressStreak = currentStreak - prevMileStone.days;
-        const wideMilestone = nextMileStone.days - prevMileStone.days;
-        const pct = (progressStreak / wideMilestone) * 100;
-        streakBar.style.width = pct + '%';
+    const progressStreak = currentStreak - prevMileStone.days;
+    const wideMilestone = nextMileStone.days - prevMileStone.days;
+    const pct = (progressStreak / wideMilestone) * 100;
+    streakBar.style.width = pct + '%';
 }
 
 function updateMilestone(){
-    milestones = [
+    return [
         { days: 40,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
         { days: 67,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
         { days: 80, icon: 'icons/star.png',    className: 'star_extension',   textClass: 'day_num_extension_other' },
