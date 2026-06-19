@@ -1273,41 +1273,51 @@ function resetToDefault() {
 function updateStreak() {
     const streakCountEl = document.querySelector('.streak-count');
     const daysToGoEl = document.querySelector('.extension_num_days');
-    const toMileStone = document.querySelector('.days_extension');
-
     const nextDaysEl = document.querySelector('.days_extension');
-    if(!nextDaysEl) return;
-
-    const daysToGo = document.querySelector('.extension_num_days');
-    if (nextDays)nextDaysEl.textContent = daysToGo;
-    daysToGoEl.textContent = daysToGo;
-
-
-
-
-    //updating the steak bar
     const streakBar = document.querySelector('.streak_bar');
+
     if(!streakBar) return;
+    
+    const highestMilestone = milestones[milestones.length - 1].days;
+    if (currentStreak > highestMilestone) {
+        updateMilestone();
+    }
 
     const nextMileStone = milestones.find(m => m.days > currentStreak);
-    if (!nextMileStone) return;
-
-    const prevMileStone = milestones.find(m => m.days < currentStreak);
-    if(!prevMileStone) return;
-
-    if (currentStreak > 0){
-        const progressStreak = currentStreak - prevMileStone.days;
-
-        const wideMilestone = nextMileStone.days - prevMileStone.days;
-        
-        const pct = (progressStreak / wideMilestone) * 100;
-
-        streakBar.style.width = pct + '%';
-    } else {
+    if (!nextMileStone) {
+        streakBar.style.width = '100%';
+        nextDaysEl.textContent = 0;
+        daysToGoEl.textContent = 0;
+        streakCountEl.textContent = currentStreak;
+        return;
+    }    
+    const prevMileStone = milestones.filter(m => m.days < currentStreak).pop();
+    if (!prevMileStone) {
         streakBar.style.width = '0%';
+        return;
     }
-    console.log('milestones array:', milestones);
-    console.log('currentStreak:', currentStreak);
-    console.log('nextMileStone:', nextMileStone);
+
+    if(!nextDaysEl) return;
+
+    const daysToGo = nextMileStone.days - currentStreak;
+    nextDaysEl.textContent = daysToGo;
+    daysToGoEl.textContent = daysToGo;
+    streakCountEl.textContent = currentStreak;
+
+    //updating the streak bar
+        const progressStreak = currentStreak - prevMileStone.days;
+        const wideMilestone = nextMileStone.days - prevMileStone.days;
+        const pct = (progressStreak / wideMilestone) * 100;
+        streakBar.style.width = pct + '%';
 }
 
+function updateMilestone(){
+    milestones = [
+        { days: 40,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
+        { days: 67,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
+        { days: 80, icon: 'icons/star.png',    className: 'star_extension',   textClass: 'day_num_extension_other' },
+        { days: 95, icon: 'icons/target.png',  className: 'target_extension', textClass: 'day_num_extension_other' },
+        { days: 120, icon: 'icons/diamond.png', className: 'target_extension', textClass: 'day_num_extension_other' },
+    ];
+
+}
