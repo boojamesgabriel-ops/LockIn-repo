@@ -1270,6 +1270,10 @@ function resetToDefault() {
     saveState(getCurrentState());
 }
 
+function trackingStreak(){
+
+}
+
 //updating the UI
 function updateStreak() {
     const streakCountEl = document.querySelector('.streak-count');
