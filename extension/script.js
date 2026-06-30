@@ -13,6 +13,9 @@ let compactHTML = "";
 let streakCount = 0;
 let currentStreak = 0;
 let lastSessionDate = "";
+let currentSessionDate = "";
+let startedAt = "";
+let endedAt = "";
 
 const milestones = [
         { days: 3,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
@@ -690,6 +693,9 @@ function getCurrentState(){
         streakCount,
         currentStreak,
         lastSessionDate,
+        currentSessionDate,
+        startedAt,
+        endedAt,
      };
 }
 
@@ -815,6 +821,9 @@ function applyStateToUi(state) {
     currentStreak = state.currentStreak ?? 0;
     streakCount = state.currentStreak ?? 0;
     lastSessionDate = state.lastSessionDate ?? "";
+    currentSessionDate = state.currentSessionDate ?? "";
+    startedAt = state.startedAt ?? "";
+    endedAt = state.endedAt ?? "";
 
   if (hasSelection && sessionDuration > 0) {
         const minutes = Math.floor(sessionDuration / 60);
@@ -871,15 +880,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else {
                 state.sessionDuration = Math.max(0, state.sessionDuration - elapsedTime);
                 if (state.sessionDuration <= 0) {
-                    alert("Session Complete!");
+                    handleSessionComplete();
                     state.controlState = "start";
                     state.hasSelection = false;
                     state.isQuickieMode = false;
                 }
             }
-            await saveState(state);
+            //await saveState(state);
 
-            applyStateToUi(state);
+            //applyStateToUi(state);
         }
 
         // Restart the active timer if session was running
@@ -911,8 +920,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (sessionDuration <= 0) {
                         clearInterval(timerInterval);
                         timerInterval = null;
-                        alert("Session complete!");
-                        resetToDefault();
+                        handleSessionComplete();
                     }
                     updateDisplayBasedOnState();
                     progressBar();
@@ -1025,15 +1033,21 @@ function formatTime(seconds) {
     return `${hours}h ${minutes}m`;
 }
 
+//function that handles the start sequence
 function startSession() {
     if (sessionDuration <= 0) return;
+
+    startedAt = Date.now()
     
     clearInterval(timerInterval);
+
     timerInterval = setInterval(() => {
         sessionDuration--;
+
         if (sessionDuration <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
+
             if (isOnBreak) {
                 // Break ended, resume original session
                 isOnBreak = false;
@@ -1043,8 +1057,7 @@ function startSession() {
             } else {
                 // Session completed
                 showStartButton();
-                alert("Session complete!");
-                resetToDefault();
+                handleSessionComplete()
             }
         }
         updateDisplayBasedOnState();
@@ -1224,8 +1237,7 @@ function resumeSession() {
             clearInterval(timerInterval);
             timerInterval = null;
 
-            resetToDefault();
-            alert("Session complete!");
+            handleSessionComplete()
             return;
         }
 
@@ -1270,8 +1282,30 @@ function resetToDefault() {
     saveState(getCurrentState());
 }
 
-function trackingStreak(){
+function completeSessionStreak(startedAt, endedAt) {
+    const sessionTime = endedAt - startedAt;
+    const today = new Date();
+    const dateToday = today.toLocaleDateString();
+    const sessionMinutes = sessionTime / 1000 / 60;
 
+    const currentSessionDate = dateToday;
+
+   if (sessionMinutes >= 15 && currentSessionDate != lastSessionDate){
+        streakCount++;
+        currentStreak++;
+        lastSessionDate = currentSessionDate;
+    }
+
+    saveState(getCurrentState());
+    updateStreak();
+}
+
+//handles what happens when the session is complete
+function handleSessionComplete(){
+    endedAt = Date.now();
+    completeSessionStreak(startedAt, endedAt);
+    alert("SESSION COMPLETE");
+    resetToDefault();
 }
 
 //updating the UI
