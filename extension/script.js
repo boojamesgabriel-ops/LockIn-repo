@@ -1284,15 +1284,26 @@ function resetToDefault() {
 
 function completeSessionStreak(startedAt, endedAt) {
     const sessionTime = endedAt - startedAt;
-    const today = new Date();
+    const today = new Date(endedAt);
     const dateToday = today.toLocaleDateString();
     const sessionMinutes = sessionTime / 1000 / 60;
-
+    const yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000));
+    const yesterdayString = yesterday.toLocaleDateString();
     const currentSessionDate = dateToday;
 
-   if (sessionMinutes >= 15 && currentSessionDate != lastSessionDate){
-        streakCount++;
+    if (sessionMinutes < 15) {
+        return;
+    }
+
+    if (lastSessionDate == currentSessionDate) {
+        return;
+    }
+
+    if (yesterdayString == lastSessionDate) {
         currentStreak++;
+        lastSessionDate = currentSessionDate;
+    } else {
+        currentStreak = 1;
         lastSessionDate = currentSessionDate;
     }
 
