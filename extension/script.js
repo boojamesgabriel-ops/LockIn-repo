@@ -1347,14 +1347,16 @@ function updateStreak() {
         return;
     }    
     const prevMileStone = milestones.filter(m => m.days < currentStreak).pop();
-    if (!prevMileStone) {
-        streakBar.style.width = '0%';
-        return;
-    }
+
     const daysToGo = nextMileStone.days - currentStreak;
     nextDaysEl.textContent = daysToGo;
     daysToGoEl.textContent = daysToGo;
     streakCountEl.textContent = currentStreak;
+
+    if (!prevMileStone && currentStreak == 0) {
+        streakBar.style.width = '0%';
+        return;
+    }
 
     const progressStreak = currentStreak - prevMileStone.days;
     const wideMilestone = nextMileStone.days - prevMileStone.days;
@@ -1364,11 +1366,11 @@ function updateStreak() {
 
 function updateMilestone(){
     return [
-        { days: 40,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
-        { days: 67,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
-        { days: 80, icon: 'icons/star.png',    className: 'star_extension',   textClass: 'day_num_extension_other' },
-        { days: 95, icon: 'icons/target.png',  className: 'target_extension', textClass: 'day_num_extension_other' },
-        { days: 120, icon: 'icons/diamond.png', className: 'target_extension', textClass: 'day_num_extension_other' },
+        { days: 30,  icon: 'icons/diamond.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
+        { days: 45,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
+        { days: 60, icon: 'icons/star.png',    className: 'star_extension',   textClass: 'day_num_extension_other' },
+        { days: 75, icon: 'icons/target.png',  className: 'target_extension', textClass: 'day_num_extension_other' },
+        { days: 100, icon: 'icons/diamond.png', className: 'target_extension', textClass: 'day_num_extension_other' },
     ];
 
 }
