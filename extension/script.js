@@ -17,7 +17,8 @@ let currentSessionDate = "";
 let startedAt = "";
 let endedAt = "";
 
-const milestones = [
+let milestones = [
+        { days: 0,  icon: '',  className: '', textClass: 'day_num_extension' },
         { days: 3,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
         { days: 7,  icon: 'icons/trophy.png',  className: 'trophy_extension', textClass: 'day_num_extension' },
         { days: 10, icon: 'icons/star.png',    className: 'star_extension',   textClass: 'day_num_extension_other' },
@@ -886,8 +887,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     state.isQuickieMode = false;
                 }
             }
-            //await saveState(state);
-
+            // await saveState(state);
             //applyStateToUi(state);
         }
 
@@ -1340,7 +1340,6 @@ function updateStreak() {
         streakBar.style.width = '0%';
         return;
     }
-
     const daysToGo = nextMileStone.days - currentStreak;
     nextDaysEl.textContent = daysToGo;
     daysToGoEl.textContent = daysToGo;
